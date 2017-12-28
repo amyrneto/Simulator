@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c781598aa2d02614f80108652156140c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridType: 1
+  gridType: 1
   numAgents: 1
   obstacleStep: 5
   maxFlushLines: 10

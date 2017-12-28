@@ -198,21 +198,20 @@ public class ObjectivesManager : MonoBehaviour
 					flushCounter = 0;
 				}
 			} else if (gridType == GridOptions.SemiCircle) {
+				s = "";
 				for (int i = 0; i < agentsGridScriptsList.Count; i++) {
 					agentsGridScriptsList [i].agentRaysScript.UpdateOutput ();
 					agentsGridScriptsList [i].goalRaysScript.UpdateOutput ();
-
-					s = "";
-					for (int ray = 0; ray < agentsGridScriptsList [i].nrRays; ray++) {
-						s += agentsGridScriptsList [i].agentRays [ray] + ";";
+					s += agentsGridScriptsList [i].agentRays [0];
+					for (int ray = 1; ray < agentsGridScriptsList [i].nrRays; ray++) {
+						s += ";" + agentsGridScriptsList [i].agentRays [ray];
 					}
-					outputFile.WriteLine (s);
-					s = "";
 					for (int ray = 0; ray < agentsGridScriptsList [i].nrRays; ray++) {
-						s += agentsGridScriptsList [i].goalRays [ray] + ";";
+						s += ";" + agentsGridScriptsList [i].goalRays [ray];
 					}
-					outputFile.WriteLine (s);
+					s += ":";
 				}
+				outputFile.WriteLine (s);
 			}
 		}
 	}
