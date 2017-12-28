@@ -32,3 +32,11 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+*.collabignore
+Sim/PanData/
+Sim/UnityPackageManager/
+Simulator1/Library/
+Simulator1/ProjectSettings/
+Simulator1/UnityPackageManager/
+Sim/Training1_Data/
+Sim/obj/
