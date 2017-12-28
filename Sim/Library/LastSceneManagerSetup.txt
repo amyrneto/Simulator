@@ -1,4 +1,0 @@
-sceneSetups:
-- path: C:/Users/aborge01.cs8451/work/Simulator-662677894dbc9343dd1765a4ca3361b219e5483e/Sim/Assets/Scenes/DataGenManyObstacles.unity
-  isLoaded: 1
-  isActive: 1
