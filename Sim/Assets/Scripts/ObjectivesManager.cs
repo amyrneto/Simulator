@@ -183,6 +183,7 @@ public class ObjectivesManager : MonoBehaviour
 					s += Mathf.Atan2 (direction.x, direction.z) * (180 / Mathf.PI) + ";";
 					//Debug.Log ("direction:" + direction);
 
+					// Compute relative velocity
 					agentsNavScriptsList [i].deltaVelocity = agentsNavScriptsList [i].agentNavMesh.velocity - agentsNavScriptsList [i].oldVelocity;
 					//Char ':' for seperating agents state and action each frame.
 					s += agentsNavScriptsList [i].deltaVelocity.x.ToString () + ";" + agentsNavScriptsList [i].deltaVelocity.y.ToString () + ";" + agentsNavScriptsList [i].deltaVelocity.z.ToString () + ":"; 
@@ -209,7 +210,15 @@ public class ObjectivesManager : MonoBehaviour
 					for (int ray = 0; ray < agentsGridScriptsList [i].nrRays; ray++) {
 						s += ";" + agentsGridScriptsList [i].goalRays [ray];
 					}
-					s += ":";
+					// Compute relative direction.
+					Vector3 direction = agentsList [i].transform.InverseTransformPoint (objectivesList [agentsNavScriptsList [i].index].position);
+					s += Mathf.Atan2 (direction.x, direction.z) * (180 / Mathf.PI) + ";";
+
+					// Compute relative velocity
+					agentsNavScriptsList [i].deltaVelocity = agentsNavScriptsList [i].agentNavMesh.velocity - agentsNavScriptsList [i].oldVelocity;
+					//Char ':' for seperating agents state and action each frame.
+					s += agentsNavScriptsList [i].deltaVelocity.x.ToString () + ";" + agentsNavScriptsList [i].deltaVelocity.y.ToString () + ";" + agentsNavScriptsList [i].deltaVelocity.z.ToString () + ":"; 
+					agentsNavScriptsList [i].oldVelocity = agentsNavScriptsList [i].agentNavMesh.velocity;
 				}
 				outputFile.WriteLine (s);
 			}
