@@ -247,12 +247,17 @@ MonoBehaviour:
   semiCirclePrefab: {fileID: 4004161729922844, guid: 6540c9a8f513f984bbedd05d801d8340,
     type: 2}
   gridArray: 
+  agentRays: []
+  goalRays: []
   gridW: 6
   gridH: 11
   posX: 3
   posZ: 3
   centered: 0
-  semiCircleSamples: 0
+  nrRays: 0
+  maxDistance: 0
+  agentRaysScript: {fileID: 0}
+  goalRaysScript: {fileID: 0}
 --- !u!114 &114953886771196656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -294,7 +299,7 @@ NavMeshAgent:
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 0
   m_AutoBraking: 1
-  m_AutoRepath: 0
+  m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 1
   m_WalkableMask: 4294967295

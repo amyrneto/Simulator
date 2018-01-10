@@ -58,6 +58,7 @@ public class ObjectivesManager : MonoBehaviour
 			}
 		}
 
+		int priority = 99;
 		for (int i = 0; i < numAgents; i++) {
 			// Set a random position for the agent
 			int index = (int)Random.Range (0.0f, objectivesList.Count - 1);
@@ -65,6 +66,9 @@ public class ObjectivesManager : MonoBehaviour
 			pos.y = agentPrefab.localScale.y / 2.0f;
 			Transform t;
 			t = Instantiate (agentPrefab, pos, Quaternion.identity);
+			t.GetComponent<UnityEngine.AI.NavMeshAgent> ().avoidancePriority = priority;
+			if (--priority < 0)
+				priority = 99;
 			AgentGridScript gs = t.GetComponent<AgentGridScript> ();
 			AgentNavigationScript ns = t.GetComponent<AgentNavigationScript> ();
 			t.name = "Agent#" + agentsList.Count;
