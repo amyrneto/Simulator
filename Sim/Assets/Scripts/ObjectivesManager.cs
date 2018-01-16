@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.AI;
 public class ObjectivesManager : MonoBehaviour
 {
 	public enum GridOptions
@@ -33,11 +33,25 @@ public class ObjectivesManager : MonoBehaviour
 	private StreamWriter outputFile;
 	private List<AgentGridScript> agentsGridScriptsList;
 	private List<AgentNavigationScript> agentsNavScriptsList;
-	//private List<ApplyPredictionsScript> agentsApplyPredictions;
-    
+    private ApplyPredictionsScript predictionScript;
 
-	// Use this for initialization
-	void Start ()
+    public List<AgentNavigationScript> AgentsNavScriptsList
+    {
+        get
+        {
+            return agentsNavScriptsList;
+        }
+
+        set
+        {
+            agentsNavScriptsList = value;
+        }
+    }
+
+    //private List<ApplyPredictionsScript> agentsApplyPredictions;
+
+    // Use this for initialization
+    void Start ()
 	{
 		state = 0;
 		flushCounter = 0;
@@ -46,8 +60,8 @@ public class ObjectivesManager : MonoBehaviour
 		agentsList = new List<Transform> ();
 
 		agentsGridScriptsList = new List<AgentGridScript> ();
-		agentsNavScriptsList = new List<AgentNavigationScript> ();
-
+		AgentsNavScriptsList = new List<AgentNavigationScript> ();
+        predictionScript = GetComponent<ApplyPredictionsScript>();
 		for (int i = (int)terrain.terrainData.bounds.min.x; i < (int)terrain.terrainData.bounds.max.x; i += obstacleStep) {
 			for (int j = (int)terrain.terrainData.bounds.min.z; j < (int)terrain.terrainData.bounds.max.z; j += obstacleStep) {
 				Transform t;
@@ -95,7 +109,7 @@ public class ObjectivesManager : MonoBehaviour
 				gs.BuildSemiCircle (p);
 			}
 			agentsGridScriptsList.Add (gs);
-			agentsNavScriptsList.Add (ns);
+			AgentsNavScriptsList.Add (ns);
 			agentsList.Add (t);
 		}
 		outputFile = new StreamWriter (fileName);
@@ -183,20 +197,19 @@ public class ObjectivesManager : MonoBehaviour
 						s += ";";
 					}
 					// Compute relative direction.
-					Vector3 direction = agentsList [i].transform.InverseTransformPoint (objectivesList [agentsNavScriptsList [i].index].position);
+					Vector3 direction = agentsList [i].transform.InverseTransformPoint (objectivesList [AgentsNavScriptsList [i].index].position);
 					s += Mathf.Atan2 (direction.x, direction.z) * (180 / Mathf.PI) + ";";
 					//Debug.Log ("direction:" + direction);
 
 					// Compute relative velocity
-					agentsNavScriptsList [i].deltaVelocity = agentsNavScriptsList [i].agentNavMesh.velocity - agentsNavScriptsList [i].oldVelocity;
+					AgentsNavScriptsList [i].deltaVelocity = AgentsNavScriptsList [i].agentNavMesh.velocity - AgentsNavScriptsList [i].oldVelocity;
 					//Char ':' for seperating agents state and action each frame.
-					s += agentsNavScriptsList [i].deltaVelocity.x.ToString () + ";" + agentsNavScriptsList [i].deltaVelocity.y.ToString () + ";" + agentsNavScriptsList [i].deltaVelocity.z.ToString () + ":"; 
-					agentsNavScriptsList [i].oldVelocity = agentsNavScriptsList [i].agentNavMesh.velocity;
+					s += AgentsNavScriptsList [i].deltaVelocity.x.ToString () + ";" + AgentsNavScriptsList [i].deltaVelocity.y.ToString () + ";" + AgentsNavScriptsList [i].deltaVelocity.z.ToString () + ":"; 
+					AgentsNavScriptsList [i].oldVelocity = AgentsNavScriptsList [i].agentNavMesh.velocity;
 				}
-
 				// Finally, writes down the string 's' in the file and flushes it every 10 frames to avoid memory overflow.
 				//agentsApplyPredictions.stateString = s;
-				outputFile.WriteLine (s);
+				outputFile.WriteLine(s);
 				flushCounter++;
 				if (flushCounter > maxFlushLines) {
 					outputFile.Flush ();
@@ -214,20 +227,36 @@ public class ObjectivesManager : MonoBehaviour
 					for (int ray = 0; ray < agentsGridScriptsList [i].nrRays; ray++) {
 						s += ";" + agentsGridScriptsList [i].goalRays [ray];
 					}
+                    s += ";";
 					// Compute relative direction.
-					Vector3 direction = agentsList [i].transform.InverseTransformPoint (objectivesList [agentsNavScriptsList [i].index].position);
-					s += Mathf.Atan2 (direction.x, direction.z) * (180 / Mathf.PI) + ";";
-
+					Vector3 direction = agentsList [i].transform.InverseTransformPoint (objectivesList [AgentsNavScriptsList [i].index].position);
+                    s += (Mathf.Atan2 (direction.x, direction.z) * (180 / Mathf.PI)+180) /360 + ";";
+                    s +=distanceToGoal(AgentsNavScriptsList[i].agentNavMesh) + ";";
+                    predictionScript.StateString = s.Substring(0, s.Length - 1) + ":";
+                    //Debug.Log(predictionScript.StateString);
 					// Compute relative velocity
-					agentsNavScriptsList [i].deltaVelocity = agentsNavScriptsList [i].agentNavMesh.velocity - agentsNavScriptsList [i].oldVelocity;
-					//Char ':' for seperating agents state and action each frame.
-					s += agentsNavScriptsList [i].deltaVelocity.x.ToString () + ";" + agentsNavScriptsList [i].deltaVelocity.y.ToString () + ";" + agentsNavScriptsList [i].deltaVelocity.z.ToString () + ":"; 
-					agentsNavScriptsList [i].oldVelocity = agentsNavScriptsList [i].agentNavMesh.velocity;
+					AgentsNavScriptsList [i].deltaVelocity = AgentsNavScriptsList [i].agentNavMesh.velocity - AgentsNavScriptsList [i].oldVelocity;
+                    //Char ':' for seperating agents state and action each frame.
+                    //s += AgentsNavScriptsList [i].deltaVelocity.x.ToString () + ";" + AgentsNavScriptsList [i].deltaVelocity.y.ToString () + ";" + AgentsNavScriptsList [i].deltaVelocity.z.ToString () + ":"; 
+                    s += AgentsNavScriptsList[i].deltaVelocity.magnitude + ";" + AgentsNavScriptsList[i].deltaVelocity.y.ToString() + ";" + AgentsNavScriptsList[i].oldRotation-AgentsNavScriptsList[i].transform.eulerAngles.y + ":";
+
+                    AgentsNavScriptsList[i].oldRotation = AgentsNavScriptsList[i].agentNavMesh.transform.eulerAngles.y;
+                    AgentsNavScriptsList[i].oldVelocity = AgentsNavScriptsList[i].agentNavMesh.velocity;
 				}
 				outputFile.WriteLine (s);
 			}
 		}
 	}
+    float distanceToGoal(NavMeshAgent agent)
+    {
+        Vector3 distance = agent.transform.InverseTransformPoint(agent.destination);
+        distance.y = 0;
+        //Debug.Log(distance.magnitude);
+        if (distance.magnitude > 10)
+            return 10;
+        return distance.magnitude;
+
+    }
 
 	void BuildList ()
 	{

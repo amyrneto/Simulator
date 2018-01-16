@@ -4,13 +4,22 @@ import math
 import time
 from numpy import genfromtxt
 
-data = genfromtxt('outputFile.csv', delimiter=';')
+#data = genfromtxt('outputFile.csv', delimiter=':')
+data = open('outputFile.csv','r')
+agents=2
+agentState=[]
+for i in range(agents):
+    for line in data:
+        agentState.append(line.split(':')[i].split(';'))
+
+data=np.array(agentState,float)
+
 #width=data[0,0]
 #height=data[0,1]
 #X=data[0,2]
 #Z=data[0,3]
 #Should be width*height
-features=6*11+1
+features=2*9+1
 data=data[1:,:]
 data=data[:,1:]
 

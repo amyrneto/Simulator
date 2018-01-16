@@ -26,7 +26,7 @@ def initAccelModel():
     #oneMoreLayer = Dense(features*3, activation='relu')(oneMoreLayer)
     #oneMoreLayer = Dropout(0.25)(oneMoreLayer)
     #oneMoreLayer = Dense(features,kernel_initializer='normal', activation='relu')(oneMoreLayer)
-    outX = Dense(1, kernel_initializer='normal',name='outX',activation='sigmoid')(oneMoreLayer)
+    outX = Dense(1, kernel_initializer='normal',name='outX',activation='linear')(oneMoreLayer)
     model = Model(inputs=[input1], outputs=[outX])
     model.compile(loss='mse',
                   optimizer='adam')
@@ -75,20 +75,29 @@ def trainModels(inputs,TrainAgain):
     inputs=inputs[len1:]
     return  MAXTRAINAGAIN,inputs
 
-data = genfromtxt('outputFile.csv', delimiter=';')
+#data = genfromtxt('outputFile.csv', delimiter=';')
+data = open('outputFile.csv','r')
+agents=2
+agentState=[]
+for i in range(agents):
+    for line in data:
+        agentState.append(line.split(':')[i].split(';'))
+
+data=np.array(agentState,float)
+
 #width=data[0,0]
 #height=data[0,1]
 #X=data[0,2]
 #Z=data[0,3]
 #Should be width*height
-features=6*11+1
+features=2*9+2
 data=data[1:,:]
 #IF timestamp is enabled,uncomment me.
 #data=data[:,1:]
 outputs=data[:,features:]
 outputs=np.delete(outputs,1,axis=1)
 data=data[:,:features]
-timesteps=4
+timesteps=3
 processedData=[]
 for i in range(len(data)-timesteps):
     line=data[i]
@@ -112,7 +121,7 @@ features=features*timesteps
 print(np.min(processedData[:,features:],axis=0))
 print(np.max(processedData[:,features:],axis=0))
 
-processedData[:,features:]=(processedData[:,features:]-np.min(processedData[:,features:]))/((np.max(processedData[:,features:]))- np.min(processedData[:,features:]))
+#processedData[:,features:]=(processedData[:,features:]-np.min(processedData[:,features:]))/((np.max(processedData[:,features:]))- np.min(processedData[:,features:]))
 print(np.min(processedData[:,features:]))
 print(np.max(processedData[:,features:]))
 

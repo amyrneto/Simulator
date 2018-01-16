@@ -58,10 +58,8 @@ public class PythonComms : MonoBehaviour {
             Thread.CurrentThread.IsBackground = true;
             Process myProcess = new Process();
             //Provide the start information for the process
-			
-
-			myProcess.StartInfo.FileName = @"C:\ProgramData\Anaconda3\python.exe";
-			myProcess.StartInfo.Arguments = @"C:\Users\aborge01.cs8451\work\Simulator\AmyrSimData\Trainee2.py";                   
+			myProcess.StartInfo.FileName = @"C:\Users\kokos\Anaconda3\python.exe";
+			myProcess.StartInfo.Arguments = @"..\AmyrSimData\Trainee2.py";                   
             ///You have to give your own paths like above(change it in unity editor if you want)
             //myProcess.StartInfo.FileName = @pythonExe;
             //myProcess.StartInfo.Arguments = @pyFile;
@@ -71,23 +69,25 @@ public class PythonComms : MonoBehaviour {
             StreamReader myStreamReader;
             StreamWriter myStreamWriter = null;
             myProcess.Start();
-            Thread.Sleep(1000);
+            Thread.Sleep(10000);
             myStreamWriter = myProcess.StandardInput;
-            myStreamWriter.WriteLine("");
-		    
+            myStreamWriter.WriteLine(AgentsStates1);
 				while (true&&!quit)
             {
                 while (AgentsStates1 == null&&!quit) ;
                 myProcess.WaitForInputIdle();
+                UnityEngine.Debug.Log(AgentsStates1);
                 myStreamWriter.WriteLine(AgentsStates1);
                 previousStates = AgentsStates1;
                 myStreamWriter.Flush();
                 string myString = myProcess.StandardOutput.ReadLine();
 
-                if (myString.Length > 0)
+                if (myString.Length > 1)
                 {
                     while (receive != null && !quit) ;
                     receive = myString.Split(':');
+                    UnityEngine.Debug.Log(receive[0]);
+
                     while (previousStates.Equals(AgentsStates1) && !quit)
                         Thread.Sleep(14);
                 }

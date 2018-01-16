@@ -5,6 +5,7 @@ import math
 import time
 
 from keras.models import Sequential, Model, load_model
+
 from keras.layers import Dense, Dropout, Activation, Flatten, BatchNormalization,Input
 from keras.utils import np_utils
 from keras import regularizers
@@ -21,8 +22,8 @@ import select
 def loadModels(AccelModel,AccelModel2,loader):
     if loader>0:
         return  AccelModel,AccelModel2,loader-1
-    AccelModel= load_model(r'C:\Users\aborge01.cs8451\work\Simulator\AmyrSimData\AccelModel.h5')
-    AccelModel2=load_model(r'C:\Users\aborge01.cs8451\work\Simulator\AmyrSimData\AccelModel2.h5')
+    AccelModel= load_model(r'..\AmyrSimData\AccelModel.h5')
+    AccelModel2=load_model(r'..\AmyrSimData\AccelModel2.h5')
     return AccelModel,AccelModel2,LOADAFTER
 def processInput(input,inputs,agentInputs):
     if throw==1:
@@ -67,15 +68,16 @@ def predictZeros():
 
 throw = 1
 LOADAFTER=1500
-timesteps=4
-features=6*11+1
+timesteps=3
+features=(2*9)+2
 features*=timesteps
 inputs=np.array([])
-loader=1500+LOADAFTER
-loader=10
+loader=155400+LOADAFTER
+loader=2
 AccelModel=None
 AccelModel2=None
 ok = sys.stdin.readline()
+print(predictZeros(),end='\n')
 #File to check states -Debug purposes.
 #trFile = open(r'C:\Users\kokos\Desktop\DiploGit\Simulator\SimulatorTests\out.txt', 'w')
 agents=1
@@ -85,7 +87,7 @@ for i in range(agents):
 agentInputs=np.reshape(agentInputs,[agents,features])
 while True:
     ok = sys.stdin.readline()
-    ok = ok[:-2]
+    ok = ok[:-1]
     #Take input from Unity,process it,properly
     [throw, inputs,agentInputs] = processInput(ok, inputs,agentInputs)
     [AccelModel,AccelModel2,loader]=loadModels(AccelModel,AccelModel2,loader)

@@ -5,6 +5,7 @@ using UnityEngine;
 public class AgentNavigationScript : MonoBehaviour {
     public Vector3 deltaVelocity;
     public Vector3 oldVelocity;
+    public float oldRotation = 0;
     public UnityEngine.AI.NavMeshAgent agentNavMesh;
     public int state, agentIndex;
     public Transform objectiveManager;
@@ -20,6 +21,7 @@ public class AgentNavigationScript : MonoBehaviour {
         cam = Camera.main;
         // Gets NavMeshAgent reference to set destination.
         agentNavMesh = GetComponent<UnityEngine.AI.NavMeshAgent>();
+
         // Initializes agent oldVelocity to compute the velocity variation frame by frame.
         oldVelocity = agentNavMesh.velocity;
         // Gets reference to objectiveManager script to access list of objectives and choose one.

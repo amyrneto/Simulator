@@ -67,9 +67,9 @@ public class SemiCircleScript : MonoBehaviour
 					}
 				}
 				if (orientation == SemiCircleOrientation.Agent) {
-					Debug.DrawRay (transform.position, dir * parentScript.agentRays [i]);
+					Debug.DrawRay(transform.position, dir * parentScript.agentRays [i]);
 				} else if (orientation == SemiCircleOrientation.Objective) {
-					Debug.DrawRay (transform.position, dir * parentScript.goalRays [i]);
+					Debug.DrawRay(transform.position, dir * parentScript.goalRays [i]);
 				}
 			}
 		}
